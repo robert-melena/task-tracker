@@ -18,7 +18,7 @@ public class Task {
         this.localDateTime = LocalDateTime.now();
         this.updateTime = null;
         this.description = description;
-        this.status = "to-do";
+        this.status = "to-do".toUpperCase();
     }
 
     public int getTaskId() {
@@ -37,13 +37,20 @@ public class Task {
         this.description = description;
     }
 
+    private String center(String text, int width){
+        int padding = width - text.length(); //6
+        int left = padding / 2; // 6 / 2 =  3
+        int right = padding - left; //6 - 3 = 3
+        return   "|" + " ".repeat(left) + text +  " ".repeat(right);
+    }
+
     @Override
     public String toString() {
-        return "Task{" +
-                "taskId=" + taskId +
-                ", description='" + description + '\'' +
-                ", status='" + status + '\'' +
-                ", localDateTime=" + localDateTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM,FormatStyle.MEDIUM)) +
-                '}';
+        return
+            center(Integer.toString(this.taskId),10) +
+            center(description,30) +
+            center(status,15) +
+            center(localDateTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM,FormatStyle.MEDIUM)),30) + "|\n";
+
     }
 }
