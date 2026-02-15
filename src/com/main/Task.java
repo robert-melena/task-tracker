@@ -37,20 +37,19 @@ public class Task {
         this.description = description;
     }
 
-    private String center(String text, int width){
-        int padding = width - text.length(); //6
-        int left = padding / 2; // 6 / 2 =  3
-        int right = padding - left; //6 - 3 = 3
-        return   "|" + " ".repeat(left) + text +  " ".repeat(right);
+    public String getStatus(){
+        return this.status;
     }
 
-    @Override
-    public String toString() {
-        return
-            center(Integer.toString(this.taskId),10) +
-            center(description,30) +
-            center(status,15) +
-            center(localDateTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM,FormatStyle.MEDIUM)),30) + "|\n";
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
+    public LocalDateTime getLocalDateTime() {
+        return localDateTime;
+    }
+
+    public void setLocalDateTime(LocalDateTime localDateTime) {
+        this.localDateTime = localDateTime;
     }
 }

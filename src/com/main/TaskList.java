@@ -27,13 +27,5 @@ public class TaskList {
         return this.tasks;
     }
 
-    @Override
-    public String toString(){
-        StringBuilder stringBuilder = new StringBuilder();
-        for(Task task: tasks){
-            stringBuilder.append(task);
-        }
-        return stringBuilder.toString();
-    }
 
 }

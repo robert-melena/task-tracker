@@ -23,6 +23,7 @@ public class TaskService {
     }
 
     public void addTask(String description){
+        taskList.add(new Task(description));
     }
 
 

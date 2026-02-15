@@ -3,6 +3,8 @@ package com.ui;
 import com.main.Task;
 import com.main.TaskService;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Scanner;
 
@@ -23,22 +25,26 @@ public class UI {
     }
 
 
+
     public void handleCommand(String command){
         if(command == null || command.isBlank()){
             return;
         }
 
-        String[] splitCommand = command.split(" ");
-        String getCommand = splitCommand[0];
+        String[] splitCommand = command.split(" ",2);
+        String getCommand = splitCommand[0].toLowerCase();
 
         switch(getCommand){
             case "add":
+                String task = splitCommand[1];
+                taskService.addTask(task);
                 break;
             case "delete":
                 break;
             case "update":
                 break;
             case "list":
+                printHistory();
                 break;
             case "exit" :
                 break;
@@ -47,26 +53,46 @@ public class UI {
         }
     }
 
-
-
-    public void printHistory(){
-        List<Task> tasks = taskService.getAllTasks();
-        if(tasks.isEmpty()){
-            System.out.println("No tasks at this time!");
-            return;
+    private boolean isValidCommand(String command){
+        String [] splitCommand = command.split(" ",2);
+        if(splitCommand[0].equals("list") || splitCommand[0].equals("exit")){
+            if(splitCommand.length == 1){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            if(splitCommand.length != 2){
+                return false;
+            }
+            return true;
         }
-        printColumns();
-        System.out.print(tasks);
-        System.out.print("-".repeat(90));
     }
 
     private void handleInput(){
         String command = "";
         do{
+            System.out.print("\ntask-cli > ");
             command = scanner.nextLine();
+            if(!isValidCommand(command)){
+                continue;
+            }
             handleCommand(command);
+
         }while (!command.equals("exit"));
 
+    }
+
+    private void printHistory(){
+        List<Task> tasks = taskService.getAllTasks();
+        if(tasks.isEmpty()){
+            printColumns();
+            System.out.print("-".repeat(90));
+            return;
+        }
+        printColumns();
+        printTasks(tasks);
+        System.out.print("-".repeat(90));
     }
 
     private void printColumns(){
@@ -83,11 +109,17 @@ public class UI {
         return   "|" + " ".repeat(left) + text +  " ".repeat(right);
     }
 
-    private void displayAcceptableArgs(){
-        System.out.println("---------------------");
-        System.out.println("add \"Buy Groceries\"");
-        System.out.println("delete \"take \"");
-        System.out.println("---------------------");
+    private void printTasks(List<Task> tasks){
+        for(Task task : tasks){
+            System.out.println(
+                    center(Integer.toString(task.getTaskId()),10) +
+                    center(task.getDescription(),30) +
+                    center(task.getStatus(),15) +
+                    center(task.getLocalDateTime().format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM,FormatStyle.MEDIUM)),30) + "|");
+        }
+
     }
+
+
 
 }
