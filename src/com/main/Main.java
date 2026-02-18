@@ -7,7 +7,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
-        //focus on fixing up command logic for UI
+        //focus on implementing other methods, delete, update, etc.
 
 
         //Next step is to figure out how to add to JSON file

@@ -13,8 +13,11 @@ import java.util.Scanner;
 * Will talk to TaskService*/
 public class UI {
 
-    private Scanner scanner = new Scanner(System.in);
     private TaskService taskService;
+    private Scanner scanner = new Scanner(System.in);
+    //Valid commands
+    private final String[] singleCommands = {"list","exit","clear"};
+    private final String[] multiCommands = {"add","delete","update"};
 
     public UI(){
         taskService = new TaskService();
@@ -24,12 +27,7 @@ public class UI {
         handleInput();
     }
 
-
-
     public void handleCommand(String command){
-        if(command == null || command.isBlank()){
-            return;
-        }
 
         String[] splitCommand = command.split(" ",2);
         String getCommand = splitCommand[0].toLowerCase();
@@ -46,26 +44,10 @@ public class UI {
             case "list":
                 printHistory();
                 break;
+            case "clear":
+                    break;
             case "exit" :
                 break;
-            default:
-                System.out.println("No command found for " + getCommand);
-        }
-    }
-
-    private boolean isValidCommand(String command){
-        String [] splitCommand = command.split(" ",2);
-        if(splitCommand[0].equals("list") || splitCommand[0].equals("exit")){
-            if(splitCommand.length == 1){
-                return true;
-            }else{
-                return false;
-            }
-        }else{
-            if(splitCommand.length != 2){
-                return false;
-            }
-            return true;
         }
     }
 
@@ -74,14 +56,50 @@ public class UI {
         do{
             System.out.print("\ntask-cli > ");
             command = scanner.nextLine();
-            if(!isValidCommand(command)){
+            if(isValidCommand(command)){
+                handleCommand(command);
                 continue;
             }
-            handleCommand(command);
-
         }while (!command.equals("exit"));
 
     }
+
+    private boolean isValidCommand(String command){
+        if(command == null || command.isBlank()){
+            return false;
+        }
+        command = command.trim();
+
+        String [] splitCommand = command.split(" ",2);
+        boolean isValid = false;
+        if(splitCommand.length == 1){
+            for(String s : singleCommands){
+                isValid = splitCommand[0].equals(s);
+                if(isValid){
+                    break;
+                }
+            }
+        }else{
+            for(String s : multiCommands){
+                isValid = splitCommand[0].equals(s);
+                if(isValid){
+                    break;
+                }
+            }
+        }
+        //if false, print command not found
+        printCommandNotFound(isValid,splitCommand[0]);
+        return isValid;
+
+    }
+
+    private void printCommandNotFound(boolean isValid,String command){
+        if(!isValid){
+            System.out.println("command not found: " + command);
+        }
+    }
+
+
 
     private void printHistory(){
         List<Task> tasks = taskService.getAllTasks();
@@ -102,12 +120,7 @@ public class UI {
                 center("DATE", 30)  +"|\n");
     }
 
-    private  String center(String text, int width){
-        int padding = width - text.length(); //6
-        int left = padding / 2; // 6 / 2 =  3
-        int right = padding - left; //6 - 3 = 3
-        return   "|" + " ".repeat(left) + text +  " ".repeat(right);
-    }
+
 
     private void printTasks(List<Task> tasks){
         for(Task task : tasks){
@@ -120,6 +133,10 @@ public class UI {
 
     }
 
-
-
+    private  String center(String text, int width){
+        int padding = width - text.length(); //6
+        int left = padding / 2; // 6 / 2 =  3
+        int right = padding - left; //6 - 3 = 3
+        return   "|" + " ".repeat(left) + text +  " ".repeat(right);
+    }
 }
