@@ -5,6 +5,7 @@ import com.main.TaskService;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -32,23 +33,30 @@ public class UI {
         String[] splitCommand = command.split(" ",2);
         String getCommand = splitCommand[0].toLowerCase();
 
-        switch(getCommand){
-            case "add":
-                String task = splitCommand[1];
-                taskService.addTask(task);
-                break;
-            case "delete":
-                break;
-            case "update":
-                break;
-            case "list":
-                printHistory();
-                break;
-            case "clear":
+        try{
+            switch(getCommand){
+                case "add":
+                    handleAdd(command);
                     break;
-            case "exit" :
-                break;
+                case "delete":
+                    //do same for delete now!
+                    taskService.deleteTask(Integer.parseInt(splitCommand[1]));
+                    break;
+                case "update":
+                    break;
+                case "list":
+                    printHistory();
+                    break;
+                case "clear":
+                    break;
+                case "exit" :
+                    break;
+            }
+
+        }catch (IllegalArgumentException e){
+            System.out.println(e.getMessage());
         }
+
     }
 
     private void handleInput(){
@@ -56,42 +64,51 @@ public class UI {
         do{
             System.out.print("\ntask-cli > ");
             command = scanner.nextLine();
-            if(isValidCommand(command)){
-                handleCommand(command);
-                continue;
-            }
+            handleCommand(command);
         }while (!command.equals("exit"));
+    }
+
+    //verify if command is acceptable, if so, add task
+    private void handleAdd(String command){
+        String [] splitCommand = command.trim().split(" ",2);
+        System.out.println(Arrays.toString(splitCommand));
+        if(splitCommand.length != 2){
+            throw new IllegalArgumentException("Invalid parameters for \"add\" command ");
+        }
+        String task = splitCommand[1];
+        taskService.addTask(task);
+        System.out.println("Task added successfully!");
 
     }
 
-    private boolean isValidCommand(String command){
-        if(command == null || command.isBlank()){
-            return false;
-        }
-        command = command.trim();
-
-        String [] splitCommand = command.split(" ",2);
-        boolean isValid = false;
-        if(splitCommand.length == 1){
-            for(String s : singleCommands){
-                isValid = splitCommand[0].equals(s);
-                if(isValid){
-                    break;
-                }
-            }
-        }else{
-            for(String s : multiCommands){
-                isValid = splitCommand[0].equals(s);
-                if(isValid){
-                    break;
-                }
-            }
-        }
-        //if false, print command not found
-        printCommandNotFound(isValid,splitCommand[0]);
-        return isValid;
-
-    }
+//    private boolean isValidCommand(String command){
+//        if(command == null || command.isBlank()){
+//            return false;
+//        }
+//        command = command.trim();
+//
+//        String [] splitCommand = command.split(" ",2);
+//        boolean isValid = false;
+//        if(splitCommand.length == 1){
+//            for(String s : singleCommands){
+//                isValid = splitCommand[0].equals(s);
+//                if(isValid){
+//                    break;
+//                }
+//            }
+//        }else{
+//            for(String s : multiCommands){
+//                isValid = splitCommand[0].equals(s);
+//                if(isValid){
+//                    break;
+//                }
+//            }
+//        }
+//        //if false, print command not found
+//        printCommandNotFound(isValid,splitCommand[0]);
+//        return isValid;
+//
+//    }
 
     private void printCommandNotFound(boolean isValid,String command){
         if(!isValid){

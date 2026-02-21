@@ -7,7 +7,7 @@ import java.util.List;
 * Will handle the service implementation of tasks
 * will interpret commands, apply business rules, coordinates actions*/
 
-public class TaskService {
+public class TaskService implements TaskServiceInterface{
     private TaskList taskList;
 
     public TaskService(){
@@ -18,12 +18,22 @@ public class TaskService {
         this.taskList = taskList;
     }
 
+    @Override
     public List<Task> getAllTasks(){
         return this.taskList.getTasks();
     }
 
+    @Override
     public void addTask(String description){
-        taskList.add(new Task(description));
+        this.taskList.add(new Task(description));
+    }
+
+    @Override
+    public void deleteTask(int taskId){
+        boolean removed = taskList.deleteTask(taskId);
+        if(!removed){
+            throw new IllegalArgumentException("Task not found");
+        }
     }
 
 
